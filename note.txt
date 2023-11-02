@@ -1,0 +1,18 @@
+Final Project iTi
+
+Application (Hello World) On a Container
+Deployed on EKS
+The EKS and All the cloud resources applied using Terraform
+2 pipelines
+1st Pipeline
+Infrastructure Pipeline
+All the cloud resources applied using Terraform
+
+2nd Pipeline
+Application Pipeline
+CI/CD Pipeline (Jenkins, Microsoft Azure Pipeline, AWS Code Pipeline)
+Deploys Hello World Container on EKS
+Preferably Microsoft Azure Pipeline because it is heavily used in the market (Not a bonus just for us)
+
+The First Pipeline (Infrastructure Pipeline) Should Trigger The 2nd Pipeline(Application Pipeline) 
+From the Application Repo(Hello World!) To Be Deployed As A Container on the EKS

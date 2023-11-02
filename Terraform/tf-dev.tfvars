@@ -1,6 +1,6 @@
 cred_file="tf-iti.json"
 vpc_name= "tf-test"
-project_id= "first-project-gcp-course"
+project_id= "iti-final-project-403406"
 region= ["asia-east1","asia-east2"]
 sub_cidr= ["10.10.2.0/24","10.10.3.0/24"]
 vm_roles = ["roles/container.admin","roles/storage.admin","roles/storage.objectViewer","roles/artifactregistry.writer"]

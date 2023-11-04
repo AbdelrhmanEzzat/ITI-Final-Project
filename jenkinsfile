@@ -1,40 +1,92 @@
 pipeline {
-  environment {
-    dockerimagename = "bravinwasike/react-app"
-    dockerImage = ""
-  }
-  agent any
-  stages {
-    stage('Checkout Source') {
-      steps {
-        git 'https://github.com/Bravinsimiyu/jenkins-kubernetes-deployment.git'
-      }
+    agent any
+    
+    environment {
+        GCP_PROJECT = 'iti-final-project-403406'
+        GKE_CLUSTER_NAME = 'private-cluster'
+        ARTIFACT_REGISTRY_REPO = 'asia-east1-docker.pkg.dev/iti-final-project-403406/my-repository'
+        DOCKER_IMAGE_NAME = 'hello-world-app'
+        GCE_INSTANCE_NAME = 'nat-private-vm'
+        GCE_ZONE = 'asia-east1-b'
+        SERVICE_ACCOUNT_JSON_KEY = credentials('gcp-service-account-key')
+
     }
-    stage('Build image') {
-      steps{
-        script {
-          dockerImage = docker.build dockerimagename
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    // Clone the Git repository
+                    git branch: 'main',
+                    url: 'https://github.com/AbdelrhmanEzzat/ITI-Final-Project.git'
+                }
+            }
         }
-      }
-    }
-    stage('Pushing Image') {
-      environment {
-               registryCredential = 'dockerhub-credentials'
-           }
-      steps{
-        script {
-          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-            dockerImage.push("latest")
-          }
+        //  stage('SSH to GCE Instance') {
+        //     steps {
+        //         script {
+        //             // Set the Google Cloud SDK configuration
+        //             sh "gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT_JSON_KEY}"
+        //             sh "gcloud config set project ${GCP_PROJECT}"
+
+        //             // SSH into the GCE instance
+        //             sh "gcloud compute ssh --zone ${GCE_ZONE} ${GCE_INSTANCE_NAME} --tunnel-through-iap"
+        //         }
+        //     }
+        // }
+
+         stage('Build and Push Image') {
+             steps {
+                 script {
+                     sh "gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT_JSON_KEY}"
+                    sh "gcloud config set project ${GCP_PROJECT}"
+
+                    // SSH into the GCE instance
+                    sh "gcloud compute ssh --zone ${GCE_ZONE} ${GCE_INSTANCE_NAME} --tunnel-through-iap"
+
+                    dir('App/'){
+                     // Build and push the Docker image to Google Artifact Registry
+                     sh " docker build -t $ARTIFACT_REGISTRY_REPO/$DOCKER_IMAGE_NAME ."
+                     sh "gcloud auth configure-docker asia-east1-docker.pkg.dev"
+                     sh "gcloud auth configure-docker \
+                            asia-east1-docker.pkg.dev"
+                     sh " docker push $ARTIFACT_REGISTRY_REPO/$DOCKER_IMAGE_NAME"
+                 }
+                 }
+             }
+         }
+
+         stage('Deploy to GKE') {
+             steps {
+                     script {
+
+                         sh "gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT_JSON_KEY}"
+                    sh "gcloud config set project ${GCP_PROJECT}"
+
+                    // SSH into the GCE instance
+                    sh "gcloud compute ssh --zone ${GCE_ZONE} ${GCE_INSTANCE_NAME} --tunnel-through-iap"
+
+                         // Authenticate with Google Cloud using service account key
+                         sh "gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS"
+
+                         // Configure kubectl to use the GKE cluster
+                        sh "gcloud container clusters get-credentials $GKE_CLUSTER_NAME --region=asia-east2 --project=$GCP_PROJECT"
+                        dir('App/'){
+                         // Apply the Kubernetes Deployment YAML
+                         sh "kubectl apply -f deployment-svc.yaml"
+                        }
+                     }
+                 }
+             }
+         }
+     }
+
+    post {
+        success {
+            echo 'Deployment to GKE completed successfully!'
         }
-      }
-    }
-    stage('Deploying React.js container to Kubernetes') {
-      steps {
-        script {
-          kubernetesDeploy(configs: "deployment.yaml", "service.yaml")
+        failure {
+            echo 'Deployment to GKE failed!'
         }
-      }
     }
-  }
 }

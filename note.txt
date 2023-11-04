@@ -16,3 +16,8 @@ Preferably Microsoft Azure Pipeline because it is heavily used in the market (No
 
 The First Pipeline (Infrastructure Pipeline) Should Trigger The 2nd Pipeline(Application Pipeline) 
 From the Application Repo(Hello World!) To Be Deployed As A Container on the EKS
+
+
+
+docker build -t asia-east1-docker.pkg.dev/iti-final-project-403406/my-repository/flask-app .
+docker push asia-east1-docker.pkg.dev/iti-final-project-403406/my-repository/flask-app 

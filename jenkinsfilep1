@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+    
+    parameters {
+        choice(name: 'ACTION', choices: ['Destroy', 'Apply'], description: 'Select the action to perform: Destroy or Apply')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    // Clone the Git repository
+                    git branch: 'main',
+                    url: 'https://github.com/AbdelrhmanEzzat/ITI-Final-Project.git'
+                }
+            }
+        }
+
+        stage('Terraform Action') {
+            steps {
+                script {
+                    // Change to the Terraform directory
+                    dir('Terraform/') {
+                        // Initialize Terraform
+                        sh 'terraform init -input=false'
+                        
+                        // Perform the selected action
+                        if (params.ACTION == 'Destroy') {
+                            // Destroy Terraform resources
+                            sh 'terraform destroy  -var-file tf-dev.tfvars -auto-approve'
+                        } else {
+                            // Apply Terraform configurations
+                            sh 'terraform apply -var-file tf-dev.tfvars -auto-approve'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Terraform operation completed successfully!'
+        }
+        failure {
+            echo 'Terraform operation failed!'
+        }
+    }
+}

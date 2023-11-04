@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: flask-app-deployment
 spec:
-  replicas: 1 # Number of instances to run
+  replicas: 3 # Number of instances to run
   selector:
     matchLabels:
       app: flask-app

@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+    
+    environment {
+        GCP_PROJECT = 'iti-final-project-403406'
+        GKE_CLUSTER_NAME = 'private-cluster'
+        ARTIFACT_REGISTRY_REPO = 'asia-east1-docker.pkg.dev/iti-final-project-403406/my-repository'
+        DOCKER_IMAGE_NAME = 'hello-world-app'
+    }
+
+    stages {
+
+
+   stage('Checkout') {
+            steps {
+                script {
+                    // Clone the Git repository
+                    git branch: 'main',
+                    url: 'https://github.com/AbdelrhmanEzzat/ITI-Final-Project.git'
+                }
+            }
+        }
+
+        stage('Build and Push Image') {
+            steps {
+                script {
+                    // Build and push the Docker image to Google Artifact Registry
+                    sh "docker build -t $GCP_PROJECT/$ARTIFACT_REGISTRY_REPO/$DOCKER_IMAGE_NAME ."
+                    sh "docker push $GCP_PROJECT/$ARTIFACT_REGISTRY_REPO/$DOCKER_IMAGE_NAME"
+                }
+            }
+        }
+
+        stage('Deploy to GKE') {
+            steps {
+                script {
+                    // Authenticate with Google Cloud using service account key
+                    withCredentials([file(credentialsId: 'gcp-service-account-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                        sh "gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS"
+                    }
+
+                    // Configure kubectl to use the GKE cluster
+                    sh "gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone=your-cluster-zone --project=$GCP_PROJECT"
+                    
+                    // Apply the Kubernetes Deployment YAML
+                    sh "kubectl apply -f app-deployment.yaml"
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment to GKE completed successfully!'
+        }
+        failure {
+            echo 'Deployment to GKE failed!'
+        }
+    }
+}

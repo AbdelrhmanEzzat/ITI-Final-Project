@@ -31,6 +31,8 @@ pipeline {
                         } else {
                             // Apply Terraform configurations
                             sh 'terraform apply -var-file tf-dev.tfvars -auto-approve'
+                             // Trigger the second pipeline upon successful completion of the first pipeline
+                            build(job: 'final-iti-project-deploy')
                         }
                     }
                 }

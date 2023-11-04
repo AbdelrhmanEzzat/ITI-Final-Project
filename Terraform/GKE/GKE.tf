@@ -12,7 +12,7 @@ resource "google_container_cluster" "public_gke" {
   master_authorized_networks_config {
     cidr_blocks {
       #cidr_block   = google_compute_subnetwork.management_subnet.ip_cidr_range
-       cidr_block   = "172.16.0.34/32"#"0.0.0.0/0" # for private "172.16.0.32/28"
+       cidr_block   = "0.0.0.0/0"#"172.16.0.34/32"#"0.0.0.0/0" # for private "172.16.0.32/28"
       display_name = "public access"
     }
   }

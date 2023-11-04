@@ -55,8 +55,6 @@ pipeline {
                     sh "gcloud compute ssh --zone ${GCE_ZONE} ${GCE_INSTANCE_NAME} --tunnel-through-iap"
                          // Configure kubectl to use the GKE cluster
                         sh "gcloud container clusters get-credentials $GKE_CLUSTER_NAME --region=asia-east2 --project=$GCP_PROJECT"
-                        sh "gcloud container clusters get-credentials private-cluster --region asia-east2 --project iti-final-project-403406"
-                       sh "gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT_JSON_KEY}"
                          // Apply the Kubernetes Deployment YAML
                          dir('App/'){
                             sh "cat deployment-svc.yaml"

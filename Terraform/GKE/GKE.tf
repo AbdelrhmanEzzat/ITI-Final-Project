@@ -1,4 +1,4 @@
-resource "google_container_cluster" "private-gke" {
+resource "google_container_cluster" "pri_gke" {
   name                     = "private-cluster"
   location                 = "${var.region[1]}"
   remove_default_node_pool = true
@@ -12,8 +12,8 @@ resource "google_container_cluster" "private-gke" {
   master_authorized_networks_config {
     cidr_blocks {
       #cidr_block   = google_compute_subnetwork.management_subnet.ip_cidr_range
-      cidr_block   = var.management_subnet_cidr
-      display_name = "external access"
+       cidr_block   = "172.16.0.32/28" #"0.0.0.0/0" # for private 
+      display_name = "private access"
     }
   }
 
@@ -32,7 +32,7 @@ resource "google_container_cluster" "private-gke" {
 resource "google_container_node_pool" "node_pool" {
   name       = "node-pool"
   location   = var.region[1]
-  cluster    = google_container_cluster.private-gke.id
+  cluster    = google_container_cluster.pri_gke.id
   node_count = 1
      node_locations = [
     "${var.region[1]}-a",

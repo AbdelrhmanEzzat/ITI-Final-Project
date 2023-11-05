@@ -5,8 +5,8 @@ Welcome to the final project repository for iTi! In this project, we have contai
 
 # You wanna your App like this   ⁉️ " just follow me 😉 "
 
-![Alt text](2023-11-05_08-51.png)
-![Alt text](image-7.png)
+![Alt text](/img/2023-11-05_08-51.png)
+![Alt text](/img/image-7.png)
 
 # Project Components 📦
 
@@ -43,29 +43,29 @@ The Application Pipeline is the second stage of our CI/CD process. It utilizes J
    - Enable necessary APIs, including Compute Engine, Kubernetes Engine, Artifact Registry, and IAM.
 2. **Add terraform service account to jenkins**
 
-![Alt text](image-1.png)
+![Alt text](/img//img/image-1.png)
 
 3. **Build pipline:**
 
-![Alt text](image-2.png)
+![Alt text](/img//img/image-2.png)
 
 
    1. Infra pipline
-    ![Alt text](image-3.png)
+    ![Alt text](/img//img/image-3.png)
 
 
    2. deploy pipline
-     ![Alt text](image-4.png)
+     ![Alt text](/img//img/image-4.png)
 
 4. **App running**
 
-   ![Alt text](image-6.png)
+   ![Alt text](/img//img/image-6.png)
 
       
 6. **Now you can access the node pods and you will see LoadBalancer IP to interact with app**
 
 ## Clean Up 🚮
-![Alt text](image-5.png)
+![Alt text](/img//img/image-5.png)
 
 
 

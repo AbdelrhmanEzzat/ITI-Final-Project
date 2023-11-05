@@ -6,6 +6,7 @@ Welcome to the final project repository for iTi! In this project, we have contai
 # You wanna your App like this   ⁉️ " just follow me 😉 "
 
 ![Alt text](2023-11-05_08-51.png)
+![Alt text](image-7.png)
 
 # Project Components 📦
 

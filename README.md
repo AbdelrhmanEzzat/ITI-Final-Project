@@ -1,8 +1,7 @@
 # ITI Final Project 🎯
 
-This project showcases the deployment of a highly available MongoDB replicaset across three zones and a stateless Node.js web application interacting with the MongoDB replicas. The infrastructure is built using Terraform modules on Google Cloud Platform (GCP). Below are the details of the project components and how to deploy them.
+Welcome to the final project repository for iTi! In this project, we have containerized a simple "Hello World" application and deployed it on Google Kubernetes Engine (GKE). The entire infrastructure and cloud resources were provisioned using Terraform, ensuring a streamlined and automated deployment process. Additionally, we have set up two pipelines to facilitate continuous integration and continuous deployment (CI/CD) using Jenkins.
 
-![Alt text](image.png)
 
 # You wanna your App like this   ⁉️ " just follow me 😉 "
 https://github.com/AbdelrhmanEzzat/GCP-O231-FinalProject/assets/64223277/05259859-9869-4106-9cf8-9e8abf592c1e
@@ -24,109 +23,49 @@ https://github.com/AbdelrhmanEzzat/GCP-O231-FinalProject/assets/64223277/0525985
 4. **Storage:**
    - Artifact Registry repository is set up to store Docker images.
 
-5. **MongoDB Replicaset:**
-   - MongoDB is deployed as a replicaset across three zones with one primary and two secondaries for high availability.
+5. **Flask app image:**
+   - Flask app to display Html template 
 
-6. **Node.js Web Application:**
-   - A stateless Node.js web application is Dockerized and deployed. It connects to the MongoDB replicas for data operations.
+7. **Load Balancer:**
+   - The web application is exposed using Kubernetes Load Balancer services for external access.
+8. **Infrastructure Pipeline**
+The first pipeline, the Infrastructure Pipeline, is responsible for provisioning all the necessary cloud resources using Terraform. This pipeline sets up the infrastructure required for running the Hello World application on GKE. Upon successful completion, it triggers the Application Pipeline for deploying the containerized application.
 
-7. **Ingress/Load Balancer:**
-   - The web application is exposed using Kubernetes Ingress or Load Balancer services for external access.
+9. **Application Pipeline**
+The Application Pipeline is the second stage of our CI/CD process. It utilizes Jenkins as the CI/CD tool to deploy the Hello World container on GKE. This pipeline ensures seamless integration and continuous deployment of changes made to the Hello World application code.
 
 # Deployment Steps 🚀
 
 1. **Set Up Google Cloud Project:**
    - Create a new project on GCP or use an existing one.
    - Enable necessary APIs, including Compute Engine, Kubernetes Engine, Artifact Registry, and IAM.
+2. **Add terraform service account to jenkins**
 
-2. **Terraform Deployment:**
- 
-   - Navigate to the `terraform/` directory.
-   - Modify `variables.tf` file with appropriate values.
-   - Run `terraform init` to initialize the Terraform configuration.
+![Alt text](image-1.png)
 
-      ```
-         terraform apply -var-file tf-dev.tfvars -lock=false #to create the infrastructure components.
-      ```
+3. **Build pipline:**
+
+![Alt text](image-2.png)
+
+
+   1. Infra pipline
+    ![Alt text](image-3.png)
+
+
+   2. deploy pipline
+     ![Alt text](image-4.png)
+
+4. **App running**
+
+   ![Alt text](image-6.png)
+
       
-3. **Dockerize and Deploy Node.js Web Application & MongoDB Replicaset Deployment**
-   (You can use this way 'locally')
-   - Navigate to the `app/` directory.
-   - Dockerize the Node.js application using a Dockerfile.
-   - Push the Docker image to the Artifact Registry repository.
-
-   (Or this this way 'from VM')
-   -  Use Dockerfile for node.js app to build it image and push it to AR after connect to your VM
-
-      ```
-         docker build -t asia-east1-docker.pkg.dev/first-project-gcp-course/my-repository/node-app .
-         gcloud auth configure-docker asia-east1-docker.pkg.dev
-         docker push asia-east1-docker.pkg.dev/first-project-gcp-course/my-repository/node-app
-      ```
-      Use Dockerfile for mongoDB app to build it image and push it to AR
-      ```
-         docker build -t asia-east1-docker.pkg.dev/first-project-gcp-course/my-repository/mongo:5.0.15 .
-         gcloud auth configure-docker asia-east1-docker.pkg.dev
-         docker push asia-east1-docker.pkg.dev/first-project-gcp-course/my-repository/mongo:5.0.15
-      ```
-
-4. **Access you managment VM to apply deployment and services and all file you need to deploy your DB and Node.js**
-
-   - Connect to cluster 
-      ```
-         gcloud container clusters get-credentials private-cluster --region asia-east2 --project first-project-gcp-course
-         git clone https://github.com/AbdelrhmanEzzat/GCP-O231-FinalProject.git
-
-      ```
-      ```   
-         kubectl apply -f statefulset.yaml 
-         kubectl apply -f headless-service.yaml 
-         kubectl apply -f mongo-configmap.yaml 
-         kubectl apply -f mongo-secret.yaml
-         kubectl apply -f googlecloud_ssd.yaml
-
-         kubectl apply -f app-deployment-svc.yaml
-         kubectl apply -f mongo-credentials.yaml
-      ```
-5. **Setup for mongoDB**
-
-    ```
-      kubectl exec -ti mongo-0 -- mongo
-      use admin
-   ```
-    
-    ```
-      rs.initiate(
-      {
-         _id: "rs0",
-         version: 1,
-         members: [
-            { _id: 0, host : "mongo-0.mongo.default.svc.cluster.local:27017" },
-            { _id: 1, host : "mongo-1.mongo.default.svc.cluster.local:27017" },
-            { _id: 2, host : "mongo-2.mongo.default.svc.cluster.local:27017" }
-         ]
-      }
-   )
-   ```
-  
-   ```
-   
-         db.createUser(
-            {
-              user: "admin",
-              pwd: "1234",
-              roles: [
-                { role: "readWrite", db: "exampledb" }
-              ]
-            }
-          );
-   ```
 6. **Now you can access the node pods and you will see LoadBalancer IP to interact with app**
 
 ## Clean Up 🚮
+![Alt text](image-5.png)
 
-To avoid incurring charges, make sure to destroy the resources after testing and experimentation. 
-Run `terraform destroy -var-file tf-dev.tfvars` in the `terraform/` directory to delete all created resources.
+
 
 
 

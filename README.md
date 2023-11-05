@@ -4,7 +4,8 @@ Welcome to the final project repository for iTi! In this project, we have contai
 
 
 # You wanna your App like this   ⁉️ " just follow me 😉 "
-https://github.com/AbdelrhmanEzzat/GCP-O231-FinalProject/assets/64223277/05259859-9869-4106-9cf8-9e8abf592c1e
+
+![Alt text](2023-11-05_08-51.png)
 
 # Project Components 📦
 
